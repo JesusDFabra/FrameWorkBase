@@ -4,18 +4,28 @@ import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import framework.custom.Custom;
+import framework.custom.utils.databases.BaseDatosAplicacion;
+import framework.custom.utils.databases.ConexionSQLServer;
 
 public class DynamicValuesCustomData {
 
 	private static String _ID = "";
 	final static String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static Random random = new Random();
+	public static HashMap<String, String> datosPruebas;
+	
+	static Logger logger=Logger.getLogger(DynamicValuesCustomData.class.getName());
 
 	private static String calcDigVerif(String num) {
 		Integer primDig, segDig;
@@ -273,5 +283,88 @@ public class DynamicValuesCustomData {
 
 		return builder.toString();
 	}
+	
+	// ====== FUNCIONES CLIENTE
+	
+	public static void setIdPrueba(int id) throws SQLException {
+		
+		String tabla = "Register";
+		datosPruebas = new HashMap<>();
+
+		String query = "SELECT * FROM " + tabla +" WHERE Id = " + id;
+
+		//muestra el query ejecutado
+		System.out.println("  >> Query: " + query);
+		datosPruebas = getDatosRecordTabla(query);
+
+		if (datosPruebas.isEmpty()) {
+            System.out.println("No se encontró registro con el ID: " + id);
+        } else {
+            System.out.println("Registro encontrado:");
+            datosPruebas.forEach((k, v) -> System.out.println(" >"+ k + ": " + v));
+        }
+	}
+	
+	public static String getNombre() {
+		return datosPruebas.get("Nombre");
+	}
+
+	/////////////////////////////////////////////////////////////////////////
+	public static String getFirstName() {
+		return datosPruebas.get("first_name");
+	}
+	public static String getLastName() {
+		return datosPruebas.get("last_name");
+	}
+	public static String getUsername() {
+		return datosPruebas.get("username");
+	}
+	public static String getPassword() {
+		return datosPruebas.get("password");
+	}
+	
+	public static HashMap<String, String> getDatosRecordTabla(String query) throws SQLException {
+        ResultSet rs;
+        Connection conn;
+        HashMap<String, String> map = new HashMap<>();
+
+        try
+        {
+        	conn = ConexionSQLServer.util().conectar();
+        	BaseDatosAplicacion bda = new BaseDatosAplicacion();
+        	rs = bda.ejecutarConsulta(query, conn);
+        	map = llenarHashConResultSet(rs);
+        	
+        	ConexionSQLServer.util().desconectar(conn);
+        	
+        	return map;
+        }
+        catch(Exception ex)
+        {
+        	logger.log(Level.SEVERE,ex.getMessage());
+            return map;
+        }
+    }
+	
+	private static HashMap<String,String> llenarHashConResultSet(ResultSet resultSet) throws SQLException {
+
+        HashMap<String,String> hashMap = new HashMap<>();
+
+        if(resultSet != null) {
+            while(resultSet.next()) {
+                for(int i=1;i<=resultSet.getMetaData().getColumnCount();i++){
+                    String nombreCampo = resultSet.getMetaData().getColumnName(i);
+                    String valorCampo = resultSet.getObject(i)== null?"":resultSet.getObject(i).toString();
+                    hashMap.put(nombreCampo, valorCampo);
+                }
+            }
+        }
+        return hashMap;
+    }
+
+	
+	
+	
+	//================================================
 
 }

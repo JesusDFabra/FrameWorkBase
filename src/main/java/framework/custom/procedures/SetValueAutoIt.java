@@ -13,7 +13,7 @@ public class SetValueAutoIt implements IPerformableProcedure {
   private final ScreenshotHelper screenshotHelper;
   private final String locator;
   private final String valueFromTestProcedure;
-  private AutoItFunctions _autoItFunctions = new AutoItFunctions();
+  private final AutoItFunctions _autoItFunctions = new AutoItFunctions();
 
   public SetValueAutoIt(Procedure procedure, ScreenshotHelper screenshotHelper, String locator, String valueFromTestProcedure) {
 
@@ -28,8 +28,10 @@ public class SetValueAutoIt implements IPerformableProcedure {
       _autoItFunctions.setValue(locator, valueFromTestProcedure);
 		} catch (Exception e) {
       String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
-      String mensaje = "Falla en tiempo de espera de ejecucion "+ "mesaje obtenido de exception: " + e.getMessage();
+      String mensaje = "Falla en tiempo de espera de ejecucion "
+                     + "mesaje obtenido de exception: " + e.getMessage();
       String comment = GeneralHelper.getCommentError(methodName, mensaje);
+      
       screenshotHelper.takeScreenshot();
       ExecutionStatusHelper helper = new ExecutionStatusHelper();
       helper.setStatusErrorOnProcedure(procedure, TypeError.OperationalError, comment);

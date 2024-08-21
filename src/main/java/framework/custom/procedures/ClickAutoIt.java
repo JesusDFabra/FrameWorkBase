@@ -12,7 +12,7 @@ public class ClickAutoIt implements IPerformableProcedure {
     private final Procedure procedure;
     private final ScreenshotHelper screenshotHelper;
     private final String locator;
-    AutoItFunctions _autoItFunctions = new AutoItFunctions();
+    private final AutoItFunctions _autoItFunctions = new AutoItFunctions();
 
     public ClickAutoIt(Procedure procedure, ScreenshotHelper screenshotHelper, String locator) {
         this.procedure = procedure;
@@ -23,13 +23,15 @@ public class ClickAutoIt implements IPerformableProcedure {
   @Override
   public void executeCustomProcedure() throws Exception {
     try {
-        _autoItFunctions.click(locator);
+      _autoItFunctions.click(locator);
     } catch (Exception e) {
+
 		String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
-        String mensaje = "Falla en tiempo de espera de ejecucion"+ "mesaje obtenido de exception: " + e.getMessage();
+    String mensaje = "Falla en tiempo de espera de ejecucion "
+                   + "mesaje obtenido de exception: " + e.getMessage();
 		String comment = GeneralHelper.getCommentError(methodName, mensaje);
-        
-        screenshotHelper.takeScreenshot();
+    
+    screenshotHelper.takeScreenshot();
 		ExecutionStatusHelper helper = new ExecutionStatusHelper();
 		helper.setStatusErrorOnProcedure(procedure, TypeError.OperationalError, comment);
 

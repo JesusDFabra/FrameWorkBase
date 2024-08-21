@@ -12,7 +12,7 @@ import static framework.custom.utils.databases.UtilsConstants.DRIVER_NOT_FOUND;
 
 public class BaseDatosAplicacion {
 
-    Logger logger = Logger.getLogger(BaseDatosAplicacion.class.getName());
+    static final Logger logger = Logger.getLogger(BaseDatosAplicacion.class.getName());
     private ResultSet rs = null;
     private Statement smt;
     private boolean result = false;

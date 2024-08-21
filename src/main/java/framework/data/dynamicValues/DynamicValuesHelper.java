@@ -9,8 +9,6 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import framework.RestWebService;
-import framework.custom.Custom;
 import framework.custom.entities.StaticFields;
 import framework.data.entities.LayoutFileData;
 import framework.data.entities.Procedure;

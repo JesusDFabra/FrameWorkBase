@@ -24,7 +24,6 @@ public class CaptureTextFromControl implements IPerformableProcedure  {
     
     @Override
     public void executeCustomProcedure() throws Exception {
-        // TODO Auto-generated method stub
         try {
             String textSMS = testToolFunctions.captureText(locator);
 			System.out.println("Texto SMS: " + textSMS);
@@ -33,8 +32,8 @@ public class CaptureTextFromControl implements IPerformableProcedure  {
 			helper.setStatusLogOkProcedure(procedure, TypeError.Sucess, "El código obtenido del autenticador es: "+textSMS);
         } catch (Exception e) {
             String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
-            String mensaje = "Falla en tiempo de espera de ejecucion manual" 
-                        + "mesaje obtenido de exception: " + e.getMessage();
+            String mensaje = "Falla en tiempo de espera de ejecucion " 
+                           + "mesaje obtenido de exception: " + e.getMessage();
             String comment = GeneralHelper.getCommentError(methodName, mensaje);
     
             screenshotHelper.takeScreenshot();

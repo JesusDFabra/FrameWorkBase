@@ -14,9 +14,9 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import framework.custom.Custom;
 import framework.custom.utils.databases.BaseDatosAplicacion;
-import framework.custom.utils.databases.ConexionSQLServer;
+import framework.custom.utils.databases.ConexionDB;
+import framework.dataProviders.ConfigFileReader;
 
 public class DynamicValuesCustomData {
 
@@ -24,8 +24,9 @@ public class DynamicValuesCustomData {
 	final static String abecedario = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	static Random random = new Random();
 	public static HashMap<String, String> datosPruebas;
-	
-	static Logger logger=Logger.getLogger(DynamicValuesCustomData.class.getName());
+	static final Logger logger=Logger.getLogger(DynamicValuesCustomData.class.getName());
+
+	ConfigFileReader f = new ConfigFileReader("configs/config.properties");
 
 	private static String calcDigVerif(String num) {
 		Integer primDig, segDig;
@@ -287,22 +288,12 @@ public class DynamicValuesCustomData {
 	// ====== FUNCIONES CLIENTE
 	
 	public static void setIdPrueba(int id) throws SQLException {
-		
-		String tabla = "Register";
-		datosPruebas = new HashMap<>();
 
+		String tabla = "Register";
 		String query = "SELECT * FROM " + tabla +" WHERE Id = " + id;
 
-		//muestra el query ejecutado
-		System.out.println("  >> Query: " + query);
+		datosPruebas = new HashMap<>();
 		datosPruebas = getDatosRecordTabla(query);
-
-		if (datosPruebas.isEmpty()) {
-            System.out.println("No se encontró registro con el ID: " + id);
-        } else {
-            System.out.println("Registro encontrado:");
-            datosPruebas.forEach((k, v) -> System.out.println(" >"+ k + ": " + v));
-        }
 	}
 	
 	public static String getNombre() {
@@ -328,19 +319,17 @@ public class DynamicValuesCustomData {
         Connection conn;
         HashMap<String, String> map = new HashMap<>();
 
-        try
-        {
-        	conn = ConexionSQLServer.util().conectar();
-        	BaseDatosAplicacion bda = new BaseDatosAplicacion();
+        try{
+			conn = ConexionDB.util().conectar("connectionString1");
+
+			BaseDatosAplicacion bda = new BaseDatosAplicacion();
         	rs = bda.ejecutarConsulta(query, conn);
         	map = llenarHashConResultSet(rs);
         	
-        	ConexionSQLServer.util().desconectar(conn);
+        	ConexionDB.util().desconectar(conn);
         	
         	return map;
-        }
-        catch(Exception ex)
-        {
+        }catch(Exception ex){
         	logger.log(Level.SEVERE,ex.getMessage());
             return map;
         }
@@ -361,10 +350,4 @@ public class DynamicValuesCustomData {
         }
         return hashMap;
     }
-
-	
-	
-	
-	//================================================
-
 }
